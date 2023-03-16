@@ -4,5 +4,10 @@
   "ssl-required": "external",
   "resource": "myclient",
   "public-client": true,
-  "confidential-port": 0
+  "confidential-port": 0,
+  "javascript": {
+  "login": {
+    "url": "http://localhost:3000/login"
+  }
+  }
 }

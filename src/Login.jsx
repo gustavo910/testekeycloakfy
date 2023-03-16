@@ -1,46 +1,37 @@
 import React from 'react';
-import { useKeycloak } from '@react-keycloak/web';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
+import { TextField, Button, Grid } from '@mui/material';
 
-function Login() {
-  const { keycloak, initialized } = useKeycloak();
+function CustomLogin(props) {
+  const [username, setUsername] = React.useState('');
+  const [password, setPassword] = React.useState('');
 
-  if (!initialized) {
-    return <div>Loading...</div>;
-  }
-
-  if (keycloak.authenticated) {
-    return <div>Authenticated!</div>;
-  }
+  const handleLogin = (e) => {
+    e.preventDefault();
+    props.keycloak.login({ username: username, password: password });
+  };
 
   return (
-    <div className="login-container">
-      <div className="login-form">
+    <div>
+      <form onSubmit={handleLogin}>
+        <Grid sx={{background:"blue"}} alignItems="center">
         <TextField
-          id="username"
           label="Username"
-          variant="outlined"
-          className="login-input"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
         />
         <TextField
-          id="password"
           label="Password"
+          value={password}
           type="password"
-          variant="outlined"
-          className="login-input"
+          onChange={(e) => setPassword(e.target.value)}
         />
-        <Button
-          variant="contained"
-          color="primary"
-          className="login-button"
-          onClick={() => keycloak.login()}
-        >
+        <Button type="submit" variant="contained">
           Login
         </Button>
-      </div>
+        </Grid>
+      </form>
     </div>
   );
 }
 
-export default Login;
+export default CustomLogin;

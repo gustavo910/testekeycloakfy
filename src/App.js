@@ -1,42 +1,33 @@
-import React from 'react';
-import { ReactKeycloakProvider } from '@react-keycloak/web';
-import keycloak from './keycloak';
+import React, { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Routes as CustomRoutes, Route } from 'react-router-dom';
+import { useKeycloak } from '@react-keycloak/web';
 import Login from './Login';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
+import Home from './Home';
+import keycloak from './keycloak';
 
-// Define o tema personalizado
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#00796b',
-    },
-    secondary: {
-      main: '#ff6f00',
-    },
-  },
-});
-
-// Configuração inicial do Keycloak
-const initOptions = {
-  onLoad: 'login-required',
-  promiseType: 'native'
-};
 
 function App() {
+
+
+    const [keycloakInitialized, setKeycloakInitialized] = useState(false);
+
+  useEffect(() => {
+    keycloak.init({ onLoad: 'check-sso' }).then(() => {
+      setKeycloakInitialized(true);
+    });
+  }, []);
+
+  if (!keycloakInitialized) {
+    return <div>Loading...</div>;
+  }
+
   return (
-    // Aplica o tema personalizado globalmente
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      {/* Inclui o provider do React Keycloak */}
-      <ReactKeycloakProvider
-        authClient={keycloak}
-        initOptions={initOptions}
-        LoadingComponent={<div>Loading...</div>}
-      >
-        <Login />
-      </ReactKeycloakProvider>
-    </ThemeProvider>
+    <Router>
+      <CustomRoutes>
+        <Route path="/" element={<Home />} />
+        <Route exact path="/login" element={<Login />} />
+      </CustomRoutes>
+    </Router>
   );
 }
 
